@@ -18,11 +18,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 
-
+# secret key likes token
 with open(os.path.join(BASE_DIR, '.secrets.json')) as token_file:
     secrets = json.loads(token_file.read())
 
+HOOK_TOKEN = secrets['TOKEN']
+HOOK_URL = secrets['WEBHOOK_URL']
 
+
+CSRF_COOKIE_SECURE = True
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -32,7 +36,7 @@ SECRET_KEY = 'mrr*cl!2nh%jjh@zn+bb=w(d&%e-jn!dru6n^xmv1m-u_xi5av'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [secrets['WEBHOOK_URL'],'*']
 
 
 # Application definition
@@ -45,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_telegrambot',
+    'telegram_bot',
+    'sendfile',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +83,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kuoteng_bot.wsgi.application'
 
-
+## sendfile
+SENDFILE_BACKEND = 'sendfile.backends.development'
+##SENDFILE_BACKEND = 'sendfile.backends.simple'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -140,8 +148,8 @@ DJANGO_TELEGRAMBOT = {
                         # NB: if use polling you must provide to run
                         # a management command that starts a worker
 
-    'WEBHOOK_SITE' : 'https://mywebsite.com',
-    'WEBHOOK_PREFIX' : '/prefix', # (Optional[str]) # If this value is specified,
+    'WEBHOOK_SITE' : secrets['WEBHOOK_URL'],
+#    'WEBHOOK_PREFIX' : '/prefix', # (Optional[str]) # If this value is specified,
                                   # a prefix is added to webhook url
 
     #'WEBHOOK_CERTIFICATE' : 'cert.pem', # If your site use self-signed

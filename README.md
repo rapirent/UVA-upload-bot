@@ -23,5 +23,14 @@ kuoteng_bot
     └── views.py
 
 ## usage
+
+- add .secrets.json file in your kuoteng_bot/
+```
+{
+    "TOKEN": "YOUR-TOKEN",
+    "WEBHOOK_URL": "YOUR-WEBHOOK_URL",
+    "DJANGO_TOEKN": ""
+}
+```
 ## author
 
