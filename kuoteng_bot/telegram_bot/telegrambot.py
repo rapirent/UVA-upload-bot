@@ -1,6 +1,14 @@
 from telegram.ext import CommandHandler, MessageHandler, Filters
 from django_telegrambot.apps import DjangoTelegramBot
 
+from emoji import emojize
+
+from telegram_bot import uva
+
+import requests.packages.urllib3
+requests.packages.urllib3.disable_warnings()
+
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -56,22 +64,40 @@ def echo(bot, update):
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
+def test(bot, update):
+    update.message.reply_text('Hello World!')
+    print('test')
+    try:
+        print('fuck')
+        bot.sendPhoto(update.message.chat_id, photo='https://telegram.org/img/t_logo.png')
+        #bot.sendPhote(update.message.chat_id, photo=open('/home/kuoteng/toc_project/kuoteng_bot/my_stat_diagram.png','rb'),caption='fuck'.encode('UTF-8'))
+    except error:
+        print('??')
+        print(error)
+def nowDiagram(bot, update):
+    pass
+
+def getFile(bot, update):
+    file = bot.getFile(update.message.document.file_id)
+    file_name = update.message.document.file_name
+
+
+    submit(file_name.strip('c','p'),file.file_path)
 
 def main():
     logger.info("Loading handlers for telegram bot")
 
-    # Default dispatcher (this is related to the first bot in settings.DJANGO_TELEGRAMBOT['BOTS'])
     dp = DjangoTelegramBot.dispatcher
     
-    # To get Dispatcher related to a specific bot
-    # dp = DjangoTelegramBot.getDispatcher('BOT_n_token')     #get by bot token
-    # dp = DjangoTelegramBot.getDispatcher('BOT_n_username')  #get by bot username
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
-
+    dp.add_handler(CommandHandler("test", test))
+    dp.add_handler(CommandHandler("getFile", getFile))
     # on noncommand i.e message - echo the message on Telegram
+
+    dp.add_handler(MessageHandler(Filters.document, getFile))
     dp.add_handler(MessageHandler([Filters.text], echo))
 
     # log all errors
