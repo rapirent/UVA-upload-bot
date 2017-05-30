@@ -2,3 +2,4 @@ venv
 VENV
 .secrets.json
 *.pyc
+*.swp
