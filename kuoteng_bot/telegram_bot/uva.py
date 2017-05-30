@@ -2,10 +2,14 @@ import requests
 
 from bs4 import BeautifulSoup
 
+import json
+##import pprint
+##pp = pprint.PrettyPrinter(indent=4)
+
 USERNAME = 'rapirent'
 PASSWD = 'ddddfvgc'
 
-URL = 'http://uva.onlinejudge.org/'
+URL = 'https://uva.onlinejudge.org/'
 session = requests.session()
 
 GET = '0'
@@ -32,7 +36,7 @@ def get_soup(url, action = GET, params = {}):
         request = session.post(url, params) 
     
     html = request.text
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, 'html.parser')
     return soup 
 
 def make_login():
@@ -53,38 +57,42 @@ def make_login():
         return True
 
 def get_problem(number):
-    get_url = 'http://uhunt.felix-halim.net/api/p/num/' + str(problem_number)
+    get_url = 'http://uhunt.felix-halim.net/api/p/num/' + str(number)
     res = requests.get(get_url)
-    data = json.loads(resp.text)
+    data = json.loads(res.text)
     return data
 
 
 def submit(number, file_path):
-    promblem = get_problem(number)
+#    print(number)
+    problem = get_problem(number)
+#    print(problem)
     if problem == {}:
-
         return False
     else:
-        problem_id = str(problem[u'pid'])
+        problem_id = int(problem[u'pid'])
+        base_url = 'http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=submit_problem&problemid=' + str(problem_id) + '&category='
 
-        base_url = 'http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=submit_problem&problemid=' + str(problem_id) + '%category='
-#        base_url += str(problem_id)
-#        base_url += '&category='
-
-        code = requests.get(file_path)
-        print(code)
+        code = requests.get(file_path).content
         login = make_login()
 
         if login:
             soup = get_soup(base_url)
             form = soup.find_all('form')[1]
-
             params = get_params(form)
-            name = form.textarea['area']
+            name = form.textarea['name']
             params[name] = code
-            params['language'] = 3
-            get_soup(URL + form['action'], action = POST, params = params)
-
+            params['language'] = '3'
+            params['localid'] = str(number)
+            
+            headers = {
+                'Referer': URL
+            }
+            r = session.post(URL + form['action'], data=params)
+            print(r)
+            # soup = get_soup(URL + 'option=com_onlinejudge&Itemid=8&page=save_submission', action = POST, params = params)
+            return True
         else:
             print('Error login')
+            return False
 
