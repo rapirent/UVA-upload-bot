@@ -1,12 +1,13 @@
+#_*_ encoding: utf-8 _*_
 from telegram.ext import CommandHandler, MessageHandler, Filters
 from django_telegrambot.apps import DjangoTelegramBot
-
 from emoji import emojize
-
 from telegram_bot import uva
-
 import requests.packages.urllib3
-requests.packages.urllib3.disable_warnings()
+
+
+#database
+from telegram_bot.models import User
 
 
 import logging
@@ -53,11 +54,32 @@ machine = TocMachine(
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
-    bot.sendMessage(update.message.chat_id, text='Hi!')
+    try:
+        search_id = User.objects.get(telegram_id=update.message.chat.id)
+        bot.sendMessage(update.message.chat_id, text='又見面了呢！')
+    except:
+        search_id = User.objects.create(telegram_id=update.message.chat.id,
+                                        first_name=str(update.message.chat.first_name),
+                                        last_name=str(update.message.chat.last_name),
+                                        username=str(update.message.chat.username))
+        bot.sendMessage(update.message.chat_id, text='是第一次見面呢！不過沒關係，我已經記住你的長相了！')
+
 
 
 def help(bot, update):
-    bot.sendMessage(update.message.chat_id, text='Help!')
+    bot.sendMessage(update.message.chat_id, text='幹!')
+
+def uva_enroll(bot, update):
+    try:
+        search_id = User.objects.get(telegram_id=update.message.chat.id)
+        print(search_id.username)
+        print(search_id.uva_id)
+        if search_id.uva_id.strip() != "":
+            bot.sendMessage(update.message.chat_id, text='嗨!我還記得你,你最後跟我說的uva帳號是'+search_id.uva_id)
+        else:
+            bot.sendMessage(update.message.chat_id, text='嗨!你好像沒有跟我說過uva帳號呢')
+    except:
+        bot.sendMessage(update.message.chat_id, text='你好像沒有透過/start讓我認識你呢!!')
 
 
 def echo(bot, update):
@@ -96,6 +118,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("fsm", nowDiagram))
+    dp.add_handler(CommandHandler("uva", uva_enroll))
     dp.add_handler(CommandHandler("getFile", getFile))
     # on noncommand i.e message - echo the message on Telegram
 
