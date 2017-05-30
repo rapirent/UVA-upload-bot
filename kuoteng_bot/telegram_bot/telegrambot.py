@@ -13,6 +13,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from .fsm import TocMachine
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 machine = TocMachine(
     states=[
@@ -60,7 +62,9 @@ def help(bot, update):
 
 def echo(bot, update):
     print(update)
-    print(bot)
+    print(update.message)
+    #update.message
+    #'chat': {'last_name': 'ding', 'type': 'private', 'first_name': 'kuoteng', 'id': 339418741, 'username': 'rapirent'}
     bot.sendMessage(update.message.chat_id, text=update.message.text)
 
 
