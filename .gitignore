@@ -3,3 +3,4 @@ VENV
 .secrets.json
 *.pyc
 *.swp
+*.model.bin

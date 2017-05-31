@@ -2,9 +2,20 @@
 from telegram.ext import CommandHandler, MessageHandler, Filters
 from django_telegrambot.apps import DjangoTelegramBot
 from emoji import emojize
+#uva upload function
 from telegram_bot import uva
 import requests.packages.urllib3
 
+#word2vec
+#不該在此引入...不過分開來做load好像不太優
+from gensim.models import word2vec
+from gensim import models
+from gensim.models.keyedvectors import KeyedVectors
+
+#jieba
+import jieba
+import random
+import jieba.posseg as pseg
 
 #database
 from telegram_bot.models import User
@@ -51,6 +62,14 @@ machine = TocMachine(
     show_conditions=True,
 )
 
+# word2vec load
+
+
+logging.basicConfig(format='%(asctime)s: %(levelname)s : %(message)s', level=logging.INFO)
+model = KeyedVectors.load_word2vec_format("med250.model.bin", binary=True)
+
+jieba.set_dictionary('jieba_data/dict.txt.big')
+
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
@@ -83,12 +102,28 @@ def uva_enroll(bot, update):
 
 
 def echo(bot, update):
-    print(update)
-    print(update.message)
+    msg = pseg.cut(update.message.text)
+    print(msg)
+    pp.pprint(msg)
+    nword_list = []
+    for word,flag in msg:
+        print(word,flag)
+        if flag.find('n') != -1:
+            nword_list.append(str(word))
+        elif flag.find('x') != -1:
+            nword_list.append(str(word))
+    print(nword_list)
+    try:
+        index = random.randint(0, len(nword_list)-1)
+        print(nword_list[index])
+        res = model.most_similar(nword_list[index], topn = 1)
+        bot.sendMessage(update.message.chat_id, text='你好像在跟我談'+nword_list[index]+'的相關話題')
+        for item in res:
+            bot.sendMessage(update.message.chat_id, text='你是想說'+item[0]+'的話題嗎?')
+    except:
     #update.message
     #'chat': {'last_name': 'ding', 'type': 'private', 'first_name': 'kuoteng', 'id': 339418741, 'username': 'rapirent'}
-    bot.sendMessage(update.message.chat_id, text=update.message.text)
-
+        bot.sendMessage(update.message.chat_id, text='對不起...我的理解力低弱不知道你在講什麼')
 
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
@@ -103,14 +138,28 @@ def nowDiagram(bot, update):
     bot.sendPhoto(update.message.chat_id, photo=open('my_stat_diagram.png','rb'))
 
 def getFile(bot, update):
-    file = bot.getFile(update.message.document.file_id)
-    file_name = update.message.document.file_name
-    number = int(file_name.strip(".cpp").strip('UVA-'))
-    uva.submit(number,file.file_path)
+    try:
+        search_id = User.objects.get(telegram_id=update.message.chat.id)
+        uva_id = search_id.uva_id
+        uva_passwd = search_id.uva_passwd
+        file = bot.getFile(update.message.document.file_id)
+        file_name = update.message.document.file_name
+        number = int(file_name.strip(".cpp").strip('UVA-'))
+#        uva.submit(number,file.file_path)
+        submission = uva.submit(uva_id,uva_passwd,number,file.file_path)
+        if True:
+            bot.sendMessage(update.message.chat_id, text='%s 已經上傳' % file_name)
+        else:
+            bot.sendMessage(update.message.chat_id, text='好像有點錯誤！')
+    except:
+        bot.sendMessage(update.message.chat_id, text='我不記得你有告訴我你的uva帳號!')
+    
 
 def main():
-    logger.info("Loading handlers for telegram bot")
 
+#    load()
+    logger.info("Loading handlers for telegram bot")
+    print('loadddddd')
     dp = DjangoTelegramBot.dispatcher
     
 

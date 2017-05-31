@@ -62,8 +62,14 @@ def get_problem(number):
     data = json.loads(res.text)
     return data
 
+def set_account(uva_id, uva_passwd):
+    USERNAME = uva_id
+    PASSWD = uva_passwd
 
-def submit(number, file_path):
+
+
+def submit(uva_id, uva_passwd, number, file_path):
+    set_account(uva_id,uva_passwd)
 #    print(number)
     problem = get_problem(number)
 #    print(problem)
