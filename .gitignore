@@ -1,6 +1,8 @@
 venv
 VENV
 .secrets.json
+*.log
+__pycache__/
 *.pyc
 *.swp
 *.model.bin
