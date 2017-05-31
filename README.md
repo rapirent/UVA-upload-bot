@@ -7,26 +7,38 @@
 
 
 # frame tree
+```
+
 kuoteng_bot
+├── db.sqlite3
+├── demo.py
+├── jieba_data
+│   └── dict.txt.big
 ├── kuoteng_bot
 │   ├── __init__.py
-│   ├── __pycache__
-│   │   ├── __init__.cpython-35.pyc
-│   │   └── settings.cpython-35.pyc
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
 ├── manage.py
+├── med250.model.bin
+├── my_stat_diagram.png
 └── telegram_bot
     ├── admin.py
     ├── apps.py
+    ├── fsm.py
     ├── __init__.py
     ├── migrations
-    │   └── __init__.py
+    │   ├── 0001_initial.py
+    │   ├── __init__.py
     ├── models.py
+    ├── my_stat_diagram.png
+    ├── telegrambot.py
     ├── tests.py
+    ├── urls.py
+    ├── uva.py
     └── views.py
-
+``
+- you can also use `tree` instuction to show on your own shell
 # Setup
 
 ## clone this repo
