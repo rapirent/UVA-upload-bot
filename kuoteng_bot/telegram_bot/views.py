@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from telegram.ext import CommandHandler, MessageHandler, Filters, Updater
 # import logging
 
-from .telegrambot import machine 
+from telegram_bot.fsm import machine 
 #from .fsm import TocMachine
 from sendfile import sendfile
 from io import BytesIO
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 
-def showState(request):
+def show_state(request):
     machine.graph.draw('my_stat_diagram.png', prog='dot', format='png')
     return sendfile(request, 'my_stat_diagram.png')
 

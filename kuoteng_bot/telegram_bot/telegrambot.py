@@ -27,198 +27,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 # from .fsm import TocMachine
-from transitions.extensions import GraphMachine
+from telegram_bot.fsm import machine 
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-machine = GraphMachine(
-    states=[
-        '()not_have_used_start_to_set',
-        '(-1)uva_unenroll_user',
-        '(0)uva_enrolled_user',
-        '(>-1)upload_file_to_uva',
-        '(*)use_start_to_set',
-        '(1)want_to_set_uva_id',
-        '(2)want_to_set_uva_passwd',
-        '(!=1||!=2)echo',
-        'set_uva_id',
-        'set_uva_passwd',
-        'show_fsm'
-    ],
-    transitions=[
-        {
-            'trigger': '\\start',
-            'source': [
-                    '()not_have_used_start_to_set',
-                    '(-1)uva_unenroll_user',
-                    '(0)uva_unenrolled_user',
-                    '(1)want_to_set_uva_id',
-                    '(2)want_to_set_uva_passwd'
-                ],
-            'dest': '(*)use_start_to set',
-        },
-        {
-            'trigger': 'go_back',
-            'source': '(*)use_start_to_set',
-            'dest': '(-1)uva_unenrolled_user',
-            'conditions': 'database states is in -1'
-        },
-        {
-            'trigger': 'go_back',
-            'source': '(*)use_start_to_set',
-            'dest': '(0)uva_enrolled_user',
-            'conditions': 'database states is in 0'
-        },
-        {
-            'trigger': 'go_back',
-            'source': '(*)use_start_to_set',
-            'dest': '(1)want_to_set_uva_id',
-            'conditions': 'database states is in 1'
-        },
-        {
-            'trigger': 'go_back',
-            'source': '(*)use_start_to_set',
-            'dest': '(2)want_to_set_uva_passwd',
-            'conditions': 'database states is in 2'
-        },
-        {
-            'trigger': 'send_text',
-            'source': [
-                    '()not_have_used_start_to_set',
-                    '(-1)uva_unenroll_user',
-                    '(0)uva_enrolled_user',
-                ],
-            'dest': '(!=1||!=2)echo',
-            'conditions': 'database states not 1 or 2',
-        },
-        {
-            'trigger': 'send_file',
-            'source': '()not_have_used_start_to_set',
-            'dest': '()not_have_used_start_to_set',
-            'conditions': 'not found in database'
-        },
-        {
-            'trigger': 'send_file',
-            'source': '(-1)uva_unenrolled_user',
-            'dest': '(-1)uva_unenrolled_user',
-            'conditions': 'database states is -1'
-        },
-        {
-            'trigger': 'send_file',
-            'source': [
-                    '(0)uva_enrolled_user',
-                    '(1)want_to_set_uva_id',
-                    '(2)want_to_set_uva_passwd'
-                ],
-            'dest': '(>-1)upload_file_to_uva',
-            'conditions': 'database states > -1'
-        },
-        {
-            'trigger': 'go_back',
-            'source': '(>-1)upload_file_to_uva',
-            'dest': '(0)uva_enrolled_user',
-            'conditions': 'database states is in 0'
-        },
-        {
-            'trigger': 'go_back',
-            'source': '(>-1)upload_file_to_uva',
-            'dest': '(1)want_to_set_uva_id',
-            'conditions': 'database states is in 1'
-        },
-        {
-            'trigger': 'go_back',
-            'source':  '(>-1)upload_file_to_uva',
-            'dest': '(2)want_to_set_uva_passwd',
-            'conditions': 'database states is in 2'
-        },
-        {
-            'trigger': 'choose_set_id',
-            'source': [
-                '(*)use_start_to_set',
-                '(-1)uva_unenroll_user',
-                '(0)uva_enrolled_user'
-                ],
-            'dest': '(1)want_to_set_uva_id'
-        },
-        {
-            'trigger': 'choose_set_passwd',
-            'source': [
-                '(*)use_start_to_set',
-                '(-1)uva_unenroll_user',
-                '(0)uva_enrolled_user'
-            ],
-            'dest': '(2)want_to_set_uva_passwd'
-        },
-        {
-            'trigger': 'send_text',
-            'source': '(1)want_to_set_uva_id',
-            'dest': 'set_uva_id',
-            'conditions': 'in states 1'
-        },
-        {
-            'trigger': 'send_text',
-            'source': '(2)want_to_set_uva_passwd',
-            'dest': 'set_uva_passwd',
-            'conditions': 'in states 2'
-        },
-        {
-            'trigger': 'go back',
-            'source': [
-                    'set_uva_id',
-                    'set_uva_passwd'
-                ],
-            'dest': '(0)uva_enrolled_user'
-        },
-        {
-            'trigger': '/fsm',
-            'source': [
-                    '()not_have_used_start_to_set',
-                    '(-1)uva_unenroll_user',
-                    '(0)uva_enrolled_user',
-                    '(1)want_to_set_uva_id',
-                    '(2)want_to_set_uva_passwd' 
-                ],
-            'dest': 'show_fsm'
-        },
-        {
-            'trigger': 'go_back',
-            'source': 'show_fsm',
-            'dest': '()not_have_used_start_to_set',
-            'conditions': 'not found in database'
-        },
-        {
-            'trigger': 'go_back',
-            'source': 'show_fsm',
-            'dest': '(-1)uva_unenrolled_user',
-            'conditions': 'database states is -1'
-        },
-        {
-            'trigger': 'go_back',
-            'source': 'show_fsm',
-            'dest': '(0)uva_enrolled_user',
-            'conditions': 'database states is 0'
-        },
-        {
-            'trigger': 'go_back',
-            'source': 'show_fsm',
-            'dest': '(1)want_to_set_uva_id',
-            'conditions': 'database states is 1'
-        },
-        {
-            'trigger': 'go_back',
-            'source': 'show_fsm',
-            'dest': '(2)want_to_set_uva_passwd',
-            'conditions': 'database states is 2'
-        }        
-    ],
-    initial='()not_have_used_start_to_set',
-    auto_transitions=False,
-    show_conditions=True,
-)
-
 # word2vec load
 
+PUNCTUATIONS = [',','.',':',';','?','!','(',')','[',']','@','&','#','%','$','{','}','--','-','？', '！', '。'
+                , ' ']
 
 logging.basicConfig(format='%(asctime)s: %(levelname)s : %(message)s', level=logging.INFO)
 model = KeyedVectors.load_word2vec_format("med250.model.bin", binary=True)
@@ -298,15 +115,18 @@ def echo(bot, update):
         logger.info("this person has not used the /start")
 
     msg = pseg.cut(update.message.text)
-    print(msg)
-    pp.pprint(msg)
+    #print(msg)
+    #pp.pprint(msg)
     nword_list = []
     for word,flag in msg:
-        print(word,flag)
-        if flag.find('n') != -1:
-            nword_list.append(str(word))
-        elif flag.find('b') != -1:
-            nword_list.append(str(word))
+        if word not in PUNCTUATIONS:
+            print(word,flag)
+            if flag.find('n') != -1:
+                nword_list.append(str(word))
+            elif flag.find('b') != -1:
+                nword_list.append(str(word))
+            elif flag.find('x') != -1:
+                nword_list.append(str(word))
     print(nword_list)
     try:
         index = random.randint(0, len(nword_list)-1)
