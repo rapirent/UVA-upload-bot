@@ -1,5 +1,6 @@
 #_*_ encoding: utf-8 _*_
-from telegram.ext import CommandHandler, MessageHandler, Filters
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from django_telegrambot.apps import DjangoTelegramBot
 from emoji import emojize
 #uva upload function
@@ -82,8 +83,27 @@ def start(bot, update):
                                         last_name=str(update.message.chat.last_name),
                                         username=str(update.message.chat.username))
         bot.sendMessage(update.message.chat_id, text='是第一次見面呢！不過沒關係，我已經記住你的長相了！')
+    
+    keyboard = [[InlineKeyboardButton("(重新)設定uva帳號", callback_data='1'),
+                 InlineKeyboardButton("(重新)設定uva密碼", callback_data='2')]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    bot.sendMessage(update.message.chat_id, text='點選以下按鈕讓我更加認識你<3', reply_markup=reply_markup)
 
-
+def button(bot, update):
+    print(update)
+    try:
+        search_id = User.objects.get(telegram_id=update.callback_query.message.chat.id)
+        query = update.callback_query
+        if query.data == '1':
+            bot.sendMessage(update.callback_query.message.chat.id, text='那麼, 請告訴我你的帳號(Tips:任何下一次輸入字串都視為帳號)')
+            search_id.states = 1
+            search_id.save()
+        else:
+            bot.sendMessage(update.callback_query.message.chat.id, text='那麼, 請告訴我你的密碼(Tips:任何下一次輸入字串都視為密碼)')
+            search_id.states = 2
+            search_id.save()
+    except:
+        bot.sendMessage(update.callback_query.message.chat.id, text='你還沒有透過/start讓我認識你呢! 做事要按照優先順序呀QQ')
 
 def help(bot, update):
     bot.sendMessage(update.message.chat_id, text='幹!')
@@ -93,7 +113,7 @@ def uva_enroll(bot, update):
         search_id = User.objects.get(telegram_id=update.message.chat.id)
         print(search_id.username)
         print(search_id.uva_id)
-        if search_id.uva_id.strip() != "":
+        if search_id.states() > -1:
             bot.sendMessage(update.message.chat_id, text='嗨!我還記得你,你最後跟我說的uva帳號是'+search_id.uva_id)
         else:
             bot.sendMessage(update.message.chat_id, text='嗨!你好像沒有跟我說過uva帳號呢')
@@ -102,6 +122,27 @@ def uva_enroll(bot, update):
 
 
 def echo(bot, update):
+    try:
+        search_id = User.objects.get(telegram_id=update.message.chat_id)
+        if search_id.states == 1:
+            search_id.uva_id = update.message.text
+            logger.info("set the uva_id to %s" % (update.message.text))
+            search_id.states = 0
+            search_id.save()
+            return
+        elif search_id.states == 2:
+            search_id.uva_passwd = update.message.text
+            logger.info("set the uva_passwd")
+            search_id.states = 0
+            search_id.save()
+            return
+        else:
+            print(search_id)
+            print(search_id.states)
+            pass
+    except:
+        logger.info("this person has not used the /start")
+
     msg = pseg.cut(update.message.text)
     print(msg)
     pp.pprint(msg)
@@ -110,7 +151,7 @@ def echo(bot, update):
         print(word,flag)
         if flag.find('n') != -1:
             nword_list.append(str(word))
-        elif flag.find('x') != -1:
+        elif flag.find('b') != -1:
             nword_list.append(str(word))
     print(nword_list)
     try:
@@ -121,8 +162,6 @@ def echo(bot, update):
         for item in res:
             bot.sendMessage(update.message.chat_id, text='你是想說'+item[0]+'的話題嗎?')
     except:
-    #update.message
-    #'chat': {'last_name': 'ding', 'type': 'private', 'first_name': 'kuoteng', 'id': 339418741, 'username': 'rapirent'}
         bot.sendMessage(update.message.chat_id, text='對不起...我的理解力低弱不知道你在講什麼')
 
 def error(bot, update, error):
@@ -157,9 +196,7 @@ def getFile(bot, update):
 
 def main():
 
-#    load()
     logger.info("Loading handlers for telegram bot")
-    print('loadddddd')
     dp = DjangoTelegramBot.dispatcher
     
 
@@ -169,6 +206,7 @@ def main():
     dp.add_handler(CommandHandler("fsm", nowDiagram))
     dp.add_handler(CommandHandler("uva", uva_enroll))
     dp.add_handler(CommandHandler("getFile", getFile))
+    dp.add_handler(CallbackQueryHandler(button))
     # on noncommand i.e message - echo the message on Telegram
 
     dp.add_handler(MessageHandler(Filters.document, getFile))
