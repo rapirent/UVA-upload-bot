@@ -31,6 +31,7 @@ kuoteng_bot
 
 ## clone this repo
 ```
+git clone https://github.com/rapirent/toc_project.git
 cd ~/toc_project
 ```
 
@@ -83,4 +84,4 @@ sudo uwsgi --ini bot.ini --touch-reload=/home/ubuntu/Life-all-in-one-bot/bot/bot
 
 # author
 
-![rapirent](https://github.com/rapirent)
+[rapirent](https://github.com/rapirent)
