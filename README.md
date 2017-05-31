@@ -66,12 +66,21 @@ virtualenv -p python3 venv
 source venv/bin/activate
 ```
 
-you can use `deactivate` command to leave virtualenv
+- you may need `export LC_ALL=C` instuction to let you set virtualenv
+- you can use `deactivate` command to leave virtualenv
 
 ## install python packages
 
 ```
 pip install -r requirements.txt
+```
+
+- you may need to run the following :
+
+```
+sudo apt-get install graphviz libgraphviz-dev pkg-config
+apt install pkg-config
+sudo -H pip3 install gitsome
 ```
 
 ## set WEBHOOK TOKEN

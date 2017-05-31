@@ -25,3 +25,4 @@ six==1.10.0
 smart-open==1.5.3
 transitions==0.5.3
 urllib3==1.21.1
+numpydoc==0.6.0
