@@ -1,4 +1,5 @@
 # toc_project
+
 - 計算理論的作業:一個telegram bot
 - based on python django framework
     - Django 1.11
@@ -7,8 +8,8 @@
 
 
 # frame tree
-```
 
+```
 kuoteng_bot
 ├── db.sqlite3
 ├── demo.py
@@ -37,11 +38,16 @@ kuoteng_bot
     ├── urls.py
     ├── uva.py
     └── views.py
-``
+```
+
 - you can also use `tree` instuction to show on your own shell
+
 # Setup
 
 ## clone this repo
+
+
+
 ```
 git clone https://github.com/rapirent/toc_project.git
 cd ~/toc_project
@@ -49,7 +55,13 @@ cd ~/toc_project
 
 ## virtualenv
 
+
+- you may probably need to `apt-get install python-software-properties` (or apt) with `apt upgrade` and `apg-get update`
+
 ```
+apt install virtualenv
+sudo apt install python3-dev
+sudo python3 get-pip.py
 virtualenv -p python3 venv
 source venv/bin/activate
 ```
@@ -59,7 +71,6 @@ you can use `deactivate` command to leave virtualenv
 ## install python packages
 
 ```
-sudo python3 get-pip.py
 pip install -r requirements.txt
 ```
 
