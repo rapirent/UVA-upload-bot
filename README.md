@@ -45,7 +45,6 @@ kuoteng_bot
     │   ├── 0001_initial.py
     │   ├── __init__.py
     ├── models.py
-    ├── my_stat_diagram.png
     ├── telegrambot.py
     ├── tests.py
     ├── urls.py
@@ -53,7 +52,7 @@ kuoteng_bot
     └── views.py
 ```
 
-- you can also use `tree` instuction to show on your own shell
+- you can also use `tree` instruction to show on your own shell
 
 # Setup
 
