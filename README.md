@@ -134,6 +134,9 @@ python manage.py runserver
 sudo uwsgi --ini kuoteng_bot.ini
 ```
 
+- you may need to edit the kuoteng_bot.ini with some detail likes `virtualenv = /home/ubuntu/venv`
+- you may need to conpose your own nginx.conf
+
 ## stop the server
 
 - ctrl + c or `sudo killall -s INT uwsgi`

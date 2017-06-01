@@ -16,9 +16,52 @@ machine = GraphMachine(
         'show_fsm',
         'show_uva_info',
         'show_help_info',
-        'search weather info'
+        'search_weather_info'
     ],
     transitions=[
+
+        {
+            'trigger': 'go_back',
+            'source': 'search_weather_info',
+            'dest': '()not_have_used_start_to_set',
+            'conditions': 'not found in database'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'search_weather_info',
+            'dest': '(-1)uva_unenrolled_user',
+            'conditions': 'database states is in -1'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'search_weather_info',
+            'dest': '(0)uva_enrolled_user',
+            'conditions': 'database states is in 0'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'search_weather_info',
+            'dest': '(1)want_to_set_uva_id',
+            'conditions': 'database states is in 1'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'search_weather_info',
+            'dest': '(2)want_to_set_uva_passwd',
+            'conditions': 'database states is in 2'
+        },
+       {
+            'trigger': 'send_location',
+            'source': [
+                '()not_have_used_start_to_set',
+                '(-1)uva_unenroll_user',
+                '(0)uva_enrolled_user',
+                '(1)want_to_set_uva_id',
+                '(2)want_to_set_uva_passwd',
+            ],
+            'dest': 'search_weather_info',
+
+        },
         {
             'trigger': 'go_back',
             'source': 'show_help_info',
@@ -48,8 +91,7 @@ machine = GraphMachine(
             'source': 'show_help_info',
             'dest': '(2)want_to_set_uva_passwd',
             'conditions': 'database states is in 2'
-        },
- 
+        }, 
         {
             'trigger': 'go_back',
             'source': 'send_back_sticker',
