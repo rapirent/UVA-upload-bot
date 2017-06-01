@@ -112,9 +112,9 @@ vim .secrets.json
     "DJANGO_TOEKN": ""
 }
 
+```
 - note that URL must be https(ssl) authentication
 
-```
 
 - 你也需要引入一個已經訓練好的材料二元檔, 命名為`med250.model.bin`
 
