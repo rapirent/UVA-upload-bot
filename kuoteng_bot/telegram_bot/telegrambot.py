@@ -123,10 +123,6 @@ def echo(bot, update):
             search_id.states = 0
             search_id.save()
             return
-        else:
-            print(search_id)
-            print(search_id.states)
-            pass
     except:
         logger.info("this person has not used the /start")
 
