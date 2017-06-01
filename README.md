@@ -17,6 +17,7 @@
 
 - 以已經訓練好的資料以gensim載入，經由jieba斷詞查找詞性，過濾出名詞，隨機選取其中一個，查找相關性最高的詞彙做出回覆
 
+- 以beautifulsoup4（查找欄位）、requests來達到自動上傳至UVA的功能
 
 # frame tree
 
@@ -114,6 +115,10 @@ vim .secrets.json
 - note that URL must be https(ssl) authentication
 
 ```
+
+- 你也需要引入一個已經訓練好的材料二元檔, 命名為`med250.model.bin`
+
+
 ## Deploy
 
 - test
@@ -135,18 +140,65 @@ sudo uwsgi --ini kuoteng_bot.ini
 
 # Usage
 
+
+## start
+
+![](./start.png)
+
 - 最初使用者尚未登錄於資料庫中, 位於`()not_have_used_start_to_set`狀態` , 如果使用者使用`/start`方法，則會將其寫入資料庫中，變為`(-1)uva_unenroll_user`狀態
     - 並且會回傳按鈕，使使用者可以點選而設置uva資訊
+
+## fsm info
+
+![](./fsm.png)
+
 - 使用者可以呼叫`/fsm`印出狀態圖
+
+## help info
+
 - 使用者可以呼叫'/help'查找使用方法和簡介
+
+## uva info
+
+![](./uva.png)
+
 - 使用者可以呼叫'/uva'查找最後更新的uva資訊(帳號)
+
+## 傳送檔案、貼圖、地點
+
+![](./upload.png)
+
 - 使用者可以傳送檔案，bot會根據uva資訊上傳此檔案至uva judege system上
+
+![](./sticker.png)
+
+
 - 使用者可以傳送貼圖，bot會送回一模一樣的貼圖
+
+![](./weather.png)
+
 - 使用者可以傳送地點，bot會傳回該地點的氣象預報
+
+
+## 傳送字串
+
+
+![](./echo1.png)
+
+![](./echo2.png)
+
+![](./echo3.png)
+
+![](./echo4.png)
+
+
 - 使用者傳送字串後，bot會進行斷詞及詞性標示，並且對於句子中的隨機名詞，回傳關聯度高的詞彙
 
+- 查找英文字彙的速度會很慢
 
-# fsm
+- 部屬的機器不是綁在這個bot上喔
+
+# 狀態圖
 
 ![](./kuoteng_bot/my_stat_diagram.png)
 

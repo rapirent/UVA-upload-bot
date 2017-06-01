@@ -205,8 +205,7 @@ def location(bot, update):
         weather = json.loads(res.text)
         pp.pprint(weather)
 
-        bot.sendMessage(update.message.chat.id, text='根據你傳過來的地點!!我判斷UTC '\
-                                    + weather['list'][0]['dt_txt'] + '的天氣是...')
+        bot.sendMessage(update.message.chat.id, text='根據你傳過來的地點!!我判斷等等的天氣是...')
         bot.sendMessage(update.message.chat.id, text=weather['list'][0]['weather'][0]['description'] \
                                     + '溫度(F): '+ str(weather['list'][0]['main']['temp']) + 
                                     '濕度(%): ' + str(weather['list'][0]['main']['humidity'])+ 

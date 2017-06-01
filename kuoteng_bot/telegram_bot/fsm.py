@@ -21,18 +21,66 @@ machine = GraphMachine(
     transitions=[
         {
             'trigger': 'go_back',
-            'source': 'send_back_sticker',
-            'dest': [
-                '()not_have_used_start_to_set',
-                '(-1)uva_unenroll_user',
-                '(0)uva_enrolled_user',
-                '(1)want_to_set_uva_id',
-                '(2)want_to_set_uva_passwd',
-            ],
-            'condition': 'check their own state'
+            'source': 'show_help_info',
+            'dest': '()not_have_used_start_to_set',
+            'conditions': 'not found in database'
         },
-
+         {
+            'trigger': 'go_back',
+            'source': 'show_help_info',
+            'dest': '(-1)uva_unenrolled_user',
+            'conditions': 'database states is in -1'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'show_help_info',
+            'dest': '(0)uva_enrolled_user',
+            'conditions': 'database states is in 0'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'show_help_info',
+            'dest': '(1)want_to_set_uva_id',
+            'conditions': 'database states is in 1'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'show_help_info',
+            'dest': '(2)want_to_set_uva_passwd',
+            'conditions': 'database states is in 2'
+        },
+ 
         {
+            'trigger': 'go_back',
+            'source': 'send_back_sticker',
+            'dest': '()not_have_used_start_to_set',
+            'conditions': 'not found in database'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'send_back_sticker',
+            'dest': '(-1)uva_unenrolled_user',
+            'conditions': 'database states is in -1'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'send_back_sticker',
+            'dest': '(0)uva_enrolled_user',
+            'conditions': 'database states is in 0'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'send_back_sticker',
+            'dest': '(1)want_to_set_uva_id',
+            'conditions': 'database states is in 1'
+        },
+         {
+            'trigger': 'go_back',
+            'source': 'send_back_sticker',
+            'dest': '(2)want_to_set_uva_passwd',
+            'conditions': 'database states is in 2'
+        },
+       {
             'trigger': 'send_sticker',
             'source': [
                 '()not_have_used_start_to_set',
@@ -44,19 +92,7 @@ machine = GraphMachine(
             'dest': 'send_back_sticker'
 
         },
-        {
-            'trigger': 'go_back',
-            'source': 'show_help_info',
-            'dest': [
-                '()not_have_used_start_to_set',
-                '(-1)uva_unenroll_user',
-                '(0)uva_enrolled_user',
-                '(1)want_to_set_uva_id',
-                '(2)want_to_set_uva_passwd',
-            ],
-            'condition': 'check their own state'
-        },
-        {
+       {
             'trigger': '/help',
             'source': [
                 '()not_have_used_start_to_set',
@@ -289,7 +325,7 @@ machine = GraphMachine(
 )
 
 
-
+##useless
 class TocMachine(GraphMachine):
     def __init__(self, **machine_configs):
         self.machine = GraphMachine(
