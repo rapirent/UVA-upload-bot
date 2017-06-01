@@ -141,11 +141,17 @@ sudo uwsgi --ini kuoteng_bot.ini
 # Usage
 
 
+## http
+
+- 對網址`https://your-webhook_url/bot/state/`訪問(get)，會取得狀態圖圖檔
+    - 如:`https://rapirent.com/bot/state/`
+    - 如果你在本機端部署, 通過127.0.0.1:8000/bot/state也可以取得
+
 ## start
 
 ![](./start.png)
 
-- 最初使用者尚未登錄於資料庫中, 位於`()not_have_used_start_to_set`狀態` , 如果使用者使用`/start`方法，則會將其寫入資料庫中，變為`(-1)uva_unenroll_user`狀態
+- 最初使用者尚未登錄於資料庫中, 位於`()not_have_used_start_to_set`狀態 , 如果使用者使用`/start`方法，則會將其寫入資料庫中，變為`(-1)uva_unenroll_user`狀態
     - 並且會回傳按鈕，使使用者可以點選而設置uva資訊
 
 ## fsm info
