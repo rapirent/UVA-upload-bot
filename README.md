@@ -51,7 +51,7 @@ kuoteng_bot
     ├── urls.py
     ├── uva.py
     └── views.py
-``
+```
 
 - you can also use `tree` instuction to show on your own shell
 
@@ -113,6 +113,7 @@ vim .secrets.json
 }
 
 ```
+
 - note that URL must be https(ssl) authentication
 
 
