@@ -112,8 +112,27 @@ sudo uwsgi --ini bot.ini --touch-reload=/home/ubuntu/Life-all-in-one-bot/bot/bot
 
 
 # fsm
+
 ![](./kuoteng_bot/my_stat_diagram.png)
+
+# Reference
+
+- 本次gensim相關參考以下:
+
+[中文斷詞:斷句不要悲劇](http://s.itho.me/techtalk/2017/%E4%B8%AD%E6%96%87%E6%96%B7%E8%A9%9E%EF%BC%9A%E6%96%B7%E5%8F%A5%E4%B8%8D%E8%A6%81%E6%82%B2%E5%8A%87.pdf)
+
+[以 gensim 訓練中文詞向量](http://zake7749.github.io/2016/08/28/word2vec-with-gensim/)
+
+[基於詞向量的主題匹配](http://zake7749.github.io/2016/08/30/chatterbot-with-word2vec/)
+
+[models.lsimodel - 隐含语义分析](http://d0evi1.com/gensim/api/models/lsimodel/)
+
+[LSA潛在語義分析](https://read01.com/PRJ0na.html)
 
 # author
 
 [rapirent](https://github.com/rapirent)
+
+# LICENSE
+
+[MIT](./LICENSE)
