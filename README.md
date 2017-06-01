@@ -5,14 +5,25 @@
     - Django 1.11
     - python 3.5
     - python telegram bot
+- 使用gensim之word2vec
+    - 私自部屬之機器修改這部份功能, 因為機器效能不佳
+- 使用jieba斷詞
+
+# implementation
+
+- 功能:自動上傳程式碼至UVA，繪製FSM圖，天氣查詢，貼圖(sticker)回覆，簡易註冊功能(database)
+
+- 我使用django之django-telegrambot APP，製作telegram_bot相關功能
+
+- 以已經訓練好的資料以gensim載入，經由jieba斷詞查找詞性，過濾出名詞，隨機選取其中一個，查找相關性最高的詞彙做出回覆
 
 
 # frame tree
 
 ```
+
 kuoteng_bot
 ├── db.sqlite3
-├── demo.py
 ├── jieba_data
 │   └── dict.txt.big
 ├── kuoteng_bot
@@ -20,6 +31,7 @@ kuoteng_bot
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
+├── kuoteng_bot.ini
 ├── manage.py
 ├── med250.model.bin
 ├── my_stat_diagram.png
@@ -38,7 +50,7 @@ kuoteng_bot
     ├── urls.py
     ├── uva.py
     └── views.py
-```
+``
 
 - you can also use `tree` instuction to show on your own shell
 
@@ -99,6 +111,8 @@ vim .secrets.json
     "DJANGO_TOEKN": ""
 }
 
+- note that URL must be https(ssl) authentication
+
 ```
 ## Deploy
 
@@ -112,16 +126,31 @@ python manage.py runserver
 - uwsgi&nginx
 
 ```
-sudo uwsgi --ini bot.ini
+sudo uwsgi --ini kuoteng_bot.ini
 ```
+
+## stop the server
+
+- ctrl + c or `sudo killall -s INT uwsgi`
 
 # Usage
 
+- 最初使用者尚未登錄於資料庫中, 位於`()not_have_used_start_to_set`狀態` , 如果使用者使用`/start`方法，則會將其寫入資料庫中，變為`(-1)uva_unenroll_user`狀態
+    - 並且會回傳按鈕，使使用者可以點選而設置uva資訊
+- 使用者可以呼叫`/fsm`印出狀態圖
+- 使用者可以呼叫'/help'查找使用方法和簡介
+- 使用者可以呼叫'/uva'查找最後更新的uva資訊(帳號)
+- 使用者可以傳送檔案，bot會根據uva資訊上傳此檔案至uva judege system上
+- 使用者可以傳送貼圖，bot會送回一模一樣的貼圖
+- 使用者可以傳送地點，bot會傳回該地點的氣象預報
+- 使用者傳送字串後，bot會進行斷詞及詞性標示，並且對於句子中的隨機名詞，回傳關聯度高的詞彙
 
 
 # fsm
 
 ![](./kuoteng_bot/my_stat_diagram.png)
+
+- 表中狀態前列`()`代表當前資料庫中, User資料表之states欄位
 
 # Reference
 

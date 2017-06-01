@@ -1,5 +1,6 @@
 from transitions.extensions import GraphMachine
 
+print('retard')
 machine = GraphMachine(
     states=[
         '()not_have_used_start_to_set',
@@ -12,11 +13,113 @@ machine = GraphMachine(
         '(!=1||!=2)echo',
         'set_uva_id',
         'set_uva_passwd',
-        'show_fsm'
+        'show_fsm',
+        'show_uva_info',
+        'show_help_info',
+        'search weather info'
     ],
     transitions=[
         {
-            'trigger': '\\start',
+            'trigger': 'go_back',
+            'source': 'send_back_sticker',
+            'dest': [
+                '()not_have_used_start_to_set',
+                '(-1)uva_unenroll_user',
+                '(0)uva_enrolled_user',
+                '(1)want_to_set_uva_id',
+                '(2)want_to_set_uva_passwd',
+            ],
+            'condition': 'check their own state'
+        },
+
+        {
+            'trigger': 'send_sticker',
+            'source': [
+                '()not_have_used_start_to_set',
+                '(-1)uva_unenroll_user',
+                '(0)uva_enrolled_user',
+                '(1)want_to_set_uva_id',
+                '(2)want_to_set_uva_passwd',
+            ],
+            'dest': 'send_back_sticker'
+
+        },
+        {
+            'trigger': 'go_back',
+            'source': 'show_help_info',
+            'dest': [
+                '()not_have_used_start_to_set',
+                '(-1)uva_unenroll_user',
+                '(0)uva_enrolled_user',
+                '(1)want_to_set_uva_id',
+                '(2)want_to_set_uva_passwd',
+            ],
+            'condition': 'check their own state'
+        },
+        {
+            'trigger': '/help',
+            'source': [
+                '()not_have_used_start_to_set',
+                '(-1)uva_unenroll_user',
+                '(0)uva_enrolled_user',
+                '(>-1)upload_file_to_uva',
+                '(*)use_start_to_set',
+                '(1)want_to_set_uva_id',
+                '(2)want_to_set_uva_passwd',
+                ],
+            'dest': 'show_help_info',
+        },
+        {
+            'trigger': 'go_back',
+            'source': 'show_uva_info',
+            'dest': '(0)uva_enrolled_user',
+        },
+        {
+            'trigger': 'go_back',
+            'source': 'show_uva_info',
+            'dest': '(1)want_to_set_uva_id',
+        },
+        {
+            'trigger': 'go_back',
+            'source': 'show_uva_info',
+            'dest': '(2)want_to_set_uva_passwd'
+        },
+       {
+            'trigger': '/uva',
+            'source': [
+                   '(0)uva_enrolled_user',
+                    '(1)want_to_set_uva_id',
+                    '(2)want_to_set_uva_passwd'
+                ],
+            'dest': 'show_uva_info',
+            'conditions': 'user enroll uva info'
+        },
+        {
+            'trigger': '/uva',
+            'source': '()not_have_used_start_to_set',
+            'dest': '()not_have_used_start_to_set',
+            'conditions': 'user not enroll uva info',
+        },
+        {
+            'trigger': '/uva',
+            'source': '(-1)uva_unenroll_user', 
+            'dest': '(-1)uva_unenroll_user', 
+            'conditions': 'user not enroll uva info',
+        },
+        {
+            'trigger': '/uva',
+            'source': '(1)want_to_set_uva_id',
+            'dest': '(1)want_to_set_uva_id',
+            'conditions': 'user not enroll uva info',
+        },
+         {
+            'trigger': '/uva',
+            'source': '(2)want_to_set_uva_passwd',
+            'dest': '(2)want_to_set_uva_passwd',
+            'conditions': 'user not enroll uva info',
+        },
+       {
+            'trigger': '/start',
             'source': [
                     '()not_have_used_start_to_set',
                     '(-1)uva_unenroll_user',
