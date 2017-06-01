@@ -95,7 +95,6 @@ def help(bot, update):
 
     bot.sendSticker(update.message.chat.id, sticker = "CAADBQADIAUAAmQK4AU1xVFZqAVROQI")
 
-    bot.sendMessage(update.message.chat_id, text="烏丸賽高")
 def uva_enroll(bot, update):
     try:
         search_id = User.objects.get(telegram_id=update.message.chat.id)

@@ -68,8 +68,7 @@ cd ~/toc_project
 
 ## virtualenv
 
-
-- you may probably need to `apt-get install python-software-properties` (or apt) with `apt upgrade` and `apg-get update`
+- you may probably need to `apt-get install python-software-properties` (or apt) with `apt upgrade` and `apt-get update`
 
 ```
 apt install virtualenv
@@ -79,7 +78,7 @@ virtualenv -p python3 venv
 source venv/bin/activate
 ```
 
-- you may need `export LC_ALL=C` instuction to let you set virtualenv
+- you may need `export LC_ALL=C` instruction to let you set virtualenv
 - you can use `deactivate` command to leave virtualenv
 
 ## install python packages
@@ -222,6 +221,9 @@ sudo uwsgi --ini kuoteng_bot.ini
 # author
 
 [rapirent](https://github.com/rapirent)
+
+- student number: E94036209
+- class: 資工三乙
 
 # LICENSE
 
