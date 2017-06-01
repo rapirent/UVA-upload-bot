@@ -1,5 +1,5 @@
 #_*_ encoding: utf-8 _*_
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, InlineQueryResultLocation
 from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from django_telegrambot.apps import DjangoTelegramBot
 from emoji import emojize
@@ -7,7 +7,7 @@ from emoji import emojize
 from telegram_bot import uva
 import requests
 import requests.packages.urllib3
-
+import json
 #word2vec
 #不該在此引入...不過分開來做load好像不太優
 from gensim.models import word2vec
@@ -44,6 +44,12 @@ jieba.set_dictionary('jieba_data/dict.txt.big')
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
+
+WEATHER_API_ID = 'b1b15e88fa797225412429c1c50c122a1'
+WEATHER_API = 'http://samples.openweathermap.org/data/2.5/forecast'
+ANSWER = ['你是不是想說','你是想要聊','不知道你的意思是不是','我想你應該是想要聊','聽起來是']
+ANSWER2 = ['原來如此, 但我不太懂你想說什麼呢','我的理解力不夠...','阿哈哈佐佑理不知道']
+
 def start(bot, update):
     try:
         search_id = User.objects.get(telegram_id=update.message.chat.id)
@@ -77,14 +83,25 @@ def button(bot, update):
         bot.sendMessage(update.callback_query.message.chat.id, text='你還沒有透過/start讓我認識你呢! 做事要按照優先順序呀QQ')
 
 def help(bot, update):
-    bot.sendMessage(update.message.chat_id, text='幹!')
+    update.message.reply_text('kuoteng_bot:國騰機器人')
+    bot.sendPhoto(update.message.chat_id, photo='https://telegram.org/img/t_logo.png')
+    bot.sendMessage(update.message.chat_id, text="/fsm:印出fsm")
+    bot.sendMessage(update.message.chat_id, text="/uva:查看綁訂uva帳戶")
+    bot.sendMessage(update.message.chat_id, text="/start:更新用戶資訊")
+    bot.sendMessage(update.message.chat_id, text="_直接上傳檔案_:uva上傳",parse_mode=ParseMode.MARKDOWN)
+    bot.sendMessage(update.message.chat_id, text="_跟我聊天_:我跟你聊天",parse_mode=ParseMode.MARKDOWN)
+    bot.sendMessage(update.message.chat_id, text="_直接給我地點_:查看當地天氣預報",parse_mode=ParseMode.MARKDOWN)
+    bot.sendMessage(update.message.chat_id, text="_給我貼圖_:回敬你一樣的貼圖",parse_mode=ParseMode.MARKDOWN)
 
+    bot.sendSticker(update.message.chat.id, sticker = "CAADBQADIAUAAmQK4AU1xVFZqAVROQI")
+
+    bot.sendMessage(update.message.chat_id, text="烏丸賽高")
 def uva_enroll(bot, update):
     try:
         search_id = User.objects.get(telegram_id=update.message.chat.id)
         print(search_id.username)
         print(search_id.uva_id)
-        if search_id.states() > -1:
+        if search_id.states > -1:
             bot.sendMessage(update.message.chat_id, text='嗨!我還記得你,你最後跟我說的uva帳號是'+search_id.uva_id)
         else:
             bot.sendMessage(update.message.chat_id, text='嗨!你好像沒有跟我說過uva帳號呢')
@@ -131,12 +148,15 @@ def echo(bot, update):
     try:
         index = random.randint(0, len(nword_list)-1)
         print(nword_list[index])
-        res = model.most_similar(nword_list[index], topn = 1)
-        bot.sendMessage(update.message.chat_id, text='你好像在跟我談'+nword_list[index]+'的相關話題')
-        for item in res:
-            bot.sendMessage(update.message.chat_id, text='你是想說'+item[0]+'的話題嗎?')
+        res = model.most_similar(nword_list[index], topn = 10)
+        item_index = random.randint(0, len(res)-1)
+        answer_index = random.randint(0, len(ANSWER)-1)
+        bot.sendMessage(update.message.chat_id, text='這好像跟'
+                                                +nword_list[index]+'有關')
+        bot.sendMessage(update.message.chat_id, text=ANSWER[answer_index]+res[item_index][0]+'的話題嗎?')
     except:
-        bot.sendMessage(update.message.chat_id, text='對不起...我的理解力低弱不知道你在講什麼')
+        index = random.randint(0, len(ANSWER2)-1)
+        bot.sendMessage(update.message.chat_id, text=ANSWER2[index])
 
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
@@ -170,7 +190,33 @@ def getFile(bot, update):
             bot.sendMessage(update.message.chat_id, text='好像有點錯誤！')
     except:
         bot.sendMessage(update.message.chat_id, text='我不記得你有告訴過我你的uva帳號!')
-    
+
+def location(bot, update):
+    print(update)
+    payload = {
+                'lat': int(update.message.location.longitude),
+                'lon': int(update.message.location.latitude),
+                'appid': WEATHER_API_ID
+            }
+    try:
+        res = requests.get(WEATHER_API, params=payload)
+        print(res)
+        weather = json.loads(res.text)
+        pp.pprint(weather)
+
+        bot.sendMessage(update.message.chat.id, text='根據你傳過來的地點!!我判斷UTC '\
+                                    + weather['list'][0]['dt_txt'] + '的天氣是...')
+        bot.sendMessage(update.message.chat.id, text=weather['list'][0]['weather'][0]['description'] \
+                                    + '溫度(F): %f 濕度(%): %d 風速: %f' % \
+                                     (weather['list'][0]['main']['temp'],\
+                                        weather['list'][0]['main']['humidty'],\
+                                        weather['list'][0]['wind']['speed']) )
+    except:
+        bot.sendMessage(update.message.chat.id, text='天氣API好像抽風了...請稍後再試')
+
+
+def sticker(bot, update):
+    bot.sendSticker(update.message.chat.id, sticker = update.message.sticker.file_id)
 
 def main():
 
@@ -186,10 +232,13 @@ def main():
     dp.add_handler(CommandHandler("getFile", getFile))
     dp.add_handler(CallbackQueryHandler(button))
     # on noncommand i.e message - echo the message on Telegram
-
+    dp.add_handler(MessageHandler(Filters.location, location))
     dp.add_handler(MessageHandler(Filters.document, getFile))
     dp.add_handler(MessageHandler([Filters.text], echo))
+    dp.add_handler(MessageHandler(Filters.sticker, sticker))
 
     # log all errors
     dp.add_error_handler(error)
 
+if __name__ == "__main__":
+    pass
