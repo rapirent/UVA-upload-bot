@@ -102,13 +102,21 @@ vim .secrets.json
 ```
 ## Deploy
 
+- test
+    - you may need to use `ngrok`(provided in repo)
+
 ```
 python manage.py runserver
 ```
 
+- uwsgi&nginx
+
 ```
-sudo uwsgi --ini bot.ini --touch-reload=/home/ubuntu/Life-all-in-one-bot/bot/bot.ini
+sudo uwsgi --ini bot.ini
 ```
+
+# Usage
+
 
 
 # fsm

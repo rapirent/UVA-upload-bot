@@ -184,7 +184,7 @@ def getFile(bot, update):
                         text="```"+str(code)+"```",
                         parse_mode=ParseMode.MARKDOWN)
         submission = uva.submit(uva_id,uva_passwd,number,file.file_path)
-        if True:
+        if submission == True:
             bot.sendMessage(update.message.chat_id, text='%s 已經上傳' % file_name)
         else:
             bot.sendMessage(update.message.chat_id, text='好像有點錯誤！')
@@ -201,17 +201,23 @@ def location(bot, update):
     try:
         res = requests.get(WEATHER_API, params=payload)
         print(res)
+        print(res.text)
         weather = json.loads(res.text)
         pp.pprint(weather)
 
+        print(weather['list'][0]['weather'][0]['description'] \
+                                    + '溫度(F): %f 濕度(%): %d 風速: %f' % \
+                                     (weather['list'][0]['main']['temp'],\
+                                        weather['list'][0]['main']['humidity'],\
+                                        weather['list'][0]['wind']['speed']) )
         bot.sendMessage(update.message.chat.id, text='根據你傳過來的地點!!我判斷UTC '\
                                     + weather['list'][0]['dt_txt'] + '的天氣是...')
         bot.sendMessage(update.message.chat.id, text=weather['list'][0]['weather'][0]['description'] \
-                                    + '溫度(F): %f 濕度(%): %d 風速: %f' % \
-                                     (weather['list'][0]['main']['temp'],\
-                                        weather['list'][0]['main']['humidty'],\
-                                        weather['list'][0]['wind']['speed']) )
+                                    + '溫度(F): '+ weather['list'][0]['main']['temp'] + 
+                                    '濕度(%): ' + weather['list'][0]['main']['humidity']+ 
+                                    '風速: ' + weather['list'][0]['wind']['speed'])
     except:
+
         bot.sendMessage(update.message.chat.id, text='天氣API好像抽風了...請稍後再試')
 
 
