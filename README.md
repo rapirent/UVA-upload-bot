@@ -54,6 +54,21 @@ kuoteng_bot
 
 - you can also use `tree` instruction to show on your own shell
 
+# Database
+
+- User table
+
+```
+class User(models.Model):
+    telegram_id = models.IntegerField()
+    first_name = models.CharField(max_length=200, default='')
+    last_name = models.CharField(max_length=200, default='')
+    username = models.CharField(max_length=200, default='')
+    states = models.IntegerField(default=-1)
+    uva_id = models.CharField(max_length=200, default='')
+    uva_passwd = models.CharField(max_length=200, default='')
+```
+
 # Setup
 
 ## clone this repo
