@@ -6,8 +6,8 @@ import json
 ##import pprint
 ##pp = pprint.PrettyPrinter(indent=4)
 
-USERNAME = 'rapirent'
-PASSWD = 'ddddfvgc'
+USERNAME = ''
+PASSWD = ''
 
 URL = 'https://uva.onlinejudge.org/'
 session = requests.session()
@@ -21,25 +21,27 @@ def get_params(form):
     for i in inputs:
         name = i.get('name')
         value = i.get('value')
-        if name: 
-            params[name] = value if value else '' 
+        if name:
+            params[name] = value if value else ''
 
     return params
 
 def get_soup(url, action = GET, params = {}):
     request = None
 
-    if action == GET: 
+    if action == GET:
         request = session.get(url)
-                                               
-    elif action == POST: 
-        request = session.post(url, params) 
-    
+
+    elif action == POST:
+        request = session.post(url, params)
+
     html = request.text
     soup = BeautifulSoup(html, 'html.parser')
-    return soup 
+    return soup
 
 def make_login():
+    global USERNAME
+    global PASSWD 
     soup = get_soup(URL)
     form = soup.find(id = "mod_loginform")
     if not form:
@@ -47,13 +49,13 @@ def make_login():
     url = form['action']
     params = get_params(form)
 
-    params['username'] = USERNAME 
+    params['username'] = USERNAME
     params['passwd'] = PASSWD
-    
+
     soup = get_soup(url, action = POST, params = params)
-    if soup.find(id = "mod_loginform"): 
-        return False 
-    else: 
+    if soup.find(id = "mod_loginform"):
+        return False
+    else:
         return True
 
 def get_problem(number):
@@ -63,6 +65,8 @@ def get_problem(number):
     return data
 
 def set_account(uva_id, uva_passwd):
+    global USERNAME
+    global PASSWD
     USERNAME = uva_id
     PASSWD = uva_passwd
 
@@ -74,6 +78,7 @@ def submit(uva_id, uva_passwd, number, file_path):
     problem = get_problem(number)
 #    print(problem)
     if problem == {}:
+        print('bad id=' + str(number))
         return False
     else:
         problem_id = int(problem[u'pid'])
@@ -90,7 +95,7 @@ def submit(uva_id, uva_passwd, number, file_path):
             params[name] = code
             params['language'] = '3'
             params['localid'] = str(number)
-            
+
             headers = {
                 'Referer': URL
             }
@@ -99,6 +104,7 @@ def submit(uva_id, uva_passwd, number, file_path):
             # soup = get_soup(URL + 'option=com_onlinejudge&Itemid=8&page=save_submission', action = POST, params = params)
             return True
         else:
+            print('bad id=' + str(number) + '\n' + USERNAME + '\n' + PASSWD)
             print('Error login')
             return False
 

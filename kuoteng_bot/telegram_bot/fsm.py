@@ -1,6 +1,5 @@
 from transitions.extensions import GraphMachine
 
-print('retard')
 machine = GraphMachine(
     states=[
         '()not_have_used_start_to_set',
