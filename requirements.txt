@@ -5,7 +5,7 @@ bs4==0.0.1
 bz2file==0.98
 certifi==2017.4.17
 chardet==3.0.3
-Django==1.11.1
+Django==1.11.29
 django-sendfile==0.3.11
 django-telegrambot==1.0.0
 emoji==0.4.5
