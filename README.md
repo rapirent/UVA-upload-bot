@@ -1,13 +1,12 @@
 # toc_project
 
-- 計算理論的作業:一個telegram bot
 - based on python django framework
     - Django 1.11
     - python 3.5
     - python telegram bot
 - 使用gensim之word2vec
-    - 私自部屬之機器修改這部份功能, 因為機器效能不佳
 - 使用jieba斷詞
+
 
 # implementation
 
@@ -241,13 +240,7 @@ sudo uwsgi --ini kuoteng_bot.ini
 
 [LSA潛在語義分析](https://read01.com/PRJ0na.html)
 
-# author
-
-[rapirent](https://github.com/rapirent)
-
-- student number: E94036209
-- class: 資工三乙
-
 # LICENSE
 
 [MIT](./LICENSE)
+
