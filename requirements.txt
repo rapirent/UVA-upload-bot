@@ -3,7 +3,7 @@ beautifulsoup4==4.6.0
 boto==2.47.0
 bs4==0.0.1
 bz2file==0.98
-certifi==2017.4.17
+certifi==2022.12.7
 chardet==3.0.3
 Django==1.11.1
 django-sendfile==0.3.11
